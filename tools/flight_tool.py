@@ -19,6 +19,13 @@ DEFAULT_ORIGIN_IATA = os.getenv(
 
 BASE_URL = "http://api.aviationstack.com/v1/flights"
 AIRTPORT_DATA = airportsdata.load()
+# Filter to include only airports where the country code is 'IN'
+# india_airports = {key: value for key, value in airportsdata.load().items() if value.get('country') == 'IN'}
+
+# # Print the first 5 Indian airports to verify
+# for key, value in list(india_airports.items())[:10]:
+#     print(f"keyssssssssssssssssss===========>{key}: {value['name']} ({value['city']})")
+
 
 COUNTRY_ALIASES = {
     "United States": "US",
@@ -31,10 +38,9 @@ COUNTRY_ALIASES = {
     "Syria": "SY",
     "Venezuela": "VE",
     "Iraq": "IQ",
-    "INDIA": "IN",
+    "India": "IN",
     "Bangladesh": "BD",
     "japan": "JP",
-    "Bangladesh": "BD",
     "Nepal": "NP"
 }
 
@@ -66,7 +72,7 @@ CITY_MAIN_AIRPORTS = {
     "Damascus": "DAM",
     "Caracas": "CCS",
     "Baghdad": "BGW",
-    "New Delhi": "DEL",
+    "Delhi": "DEL",
     "Dhaka": "DAC",
     "Tokyo": "NRT",
     "Kathmandu": "BIR"
@@ -83,6 +89,7 @@ def clean_text(text: str) -> str:
         "flight",
         "flights",
         "airline",
+        "including"
         "airport",
         "airports",
         "departures",
@@ -99,6 +106,7 @@ def clean_text(text: str) -> str:
         "days",
         "include",
         "hotel",
+        "hotels",
         "sightseen",
         "sightseeing",
         "tour",
@@ -176,10 +184,12 @@ def get_best_airport_for_country(country_code: str) -> str:
                 score += 50
            if "intl" in name or "intl" in city:
                 score += 40
+           if "capital" in name or "capital" in city:
+                score += 20
             
            if "main" in name or "main" in city:
                 score += 5
-        candidate_airports.append((score, iata))
+           candidate_airports.append((score, iata))
     
     if not candidate_airports:
         return None  # No airports found for the country 
@@ -193,7 +203,7 @@ def resolve_location_to_iata(location: str) -> str:
         return None  # Return None if the location is empty or None
     raw_location = location.strip()
     # direct iata code check
-    if re.fullmatch(r"[A-Z]{3}", raw_location):
+    if re.fullmatch(r"[A-Za-z]{1,30}", raw_location):
         code = raw_location.upper()
         if code in AIRTPORT_DATA:
             return code
@@ -211,7 +221,6 @@ def resolve_location_to_iata(location: str) -> str:
     if country_code:
         airport_code = get_best_airport_for_country(country_code)
         if airport_code:
-
             return airport_code
 
    
@@ -279,19 +288,23 @@ def parse_route(query: str):
     q_lower = q.lower()
     # Global all country mentions in the query
     global_keywords=[
-        "flight", "flights", "airline", "airport", "airports","all country", "global", "worldwide flight", "worldwide flights", "international flight", "international flights", "international travel", "international travel info", "international travel information", "trip", "trips", "travel", "travels", "journey", "journeys", "vacation", "vacations", "holiday", "holidays", "info", "information", "plan", "plans"
+       "all country", "global","global flight","global flights", "worldwide flight", "worldwide flights", "international flight", "international flights", "international travel", "international travel info", "international travel information"
      ]
+    # global_keywords=[
+    #     "flight", "flights", "airline", "airport", "airports","all country", "global", "worldwide flight", "worldwide flights", "international flight", "international flights", "international travel", "international travel info", "international travel information", "trip", "trips", "travel", "travels", "journey", "journeys", "vacation", "vacations", "holiday", "holidays", "info", "information", "plan", "plans"
+    #  ]
     
     if any(keyword in q_lower for keyword in global_keywords):
         return None, None  # Return None for both if the query is about global or international flights
     
     # Direct IATA code check
-    cods = re.findall(r"\b[A-Z]{3}\b", q)
-    if len(cods) >= 2:
-        deps_code = cods[0].upper()
-        arrs_code = cods[1].upper()
-        if deps_code in AIRTPORT_DATA and arrs_code in AIRTPORT_DATA:
-           return deps_code, arrs_code  # Return the first two IATA codes found in the query
+    codes = re.findall(r"\b[A-Z]{3}\b", q)
+    if len(codes) >= 2:
+        deps_code = codes[0].upper()
+        arrs_code = codes[1].upper()
+        
+        # if deps_code in AIRTPORT_DATA and arrs_code in AIRTPORT_DATA:
+        #    return deps_code, arrs_code  # Return the first two IATA codes found in the query
     
     # Pattern matching for "from <location> to <location>" or "<location> to <location>"
     match = re.search(r"from\s+(.+?)\s+to\s+(.+)", q_lower)
@@ -363,7 +376,6 @@ Arrival: {arrival_airport} ({arr}) at {arrival_time} (Terminal: {arrival_termina
 \n""".strip()
         
 def search_flights(query: str, limit: int =10) -> str:
-    print(f"PLANS:=> '{query}'")
     """Search for flights based on the provided location."""
     if not API_KEY:
         return "API key is not set. Please set the AVIATIONSTACK_API_KEY environment variable."
@@ -376,12 +388,13 @@ def search_flights(query: str, limit: int =10) -> str:
         params["dep_iata"] = dep_iata
     
     if arr_iata:
-        params["arr_iata"] = arr_iata
-    
+        params["arr_iata"] = arr_iata   
+        print(f"arrival and departure--->{arr_iata,dep_iata}")
+        return 
     try:
-        response = requests.get(BASE_URL, params=params, timeout=30)
+        response = requests.get(url=BASE_URL, params=params, timeout=30)
         response.raise_for_status()  # Raise an error for bad responses
-        data = response.json()    
+        data = response.json()   
     except requests.exceptions.RequestException as e:
         return f"Error fetching flight data: {e}"
     except ValueError:
@@ -421,7 +434,8 @@ def search_flights(query: str, limit: int =10) -> str:
     return f"{route_info}\n" + "\n\n".join(formatted_flights)
             
 if __name__ == "__main__":
-    query = input("7 days plan from india to japan:")
+    query = input("plan a complete 7 days trip from india to bangladesh, including flights, hotels and sight seeing under 2 lakhs")
+    # query = input("7 days plan from india to japan:")
     # query = input("Plan a 7 days Japan trip from Bangladesh:")
     # query = input("Enter your flight query (e.g., 'from India to Japan'): ")
     response = search_flights(query)

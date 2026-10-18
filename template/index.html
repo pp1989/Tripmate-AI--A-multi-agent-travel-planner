@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>TripMate AI — Plan Your Perfect Trip</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/style.css" />
+  <script src="static/scripts.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-blue" aria-hidden="true"></div>
+  <div class="ambient ambient-violet" aria-hidden="true"></div>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="TripMate AI home">
+        <span class="brand-mark" aria-hidden="true">✈</span>
+        <span>TripMate<span class="brand-ai"> AI</span></span>
+      </a>
+      <div class="topbar-right">
+        <span class="system-status"><span class="status-dot"></span> All systems online</span>
+        <a class="top-link" href="#how-it-works">How it works <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="eyebrow"><span class="eyebrow-icon">✦</span> YOUR PERSONAL AI TRAVEL CREW</div>
+        <h1 id="hero-title">The world is yours<br class="desktop-break"> to <span class="gradient-text">explore.</span></h1>
+        <p class="hero-copy">From takeoff to hidden gems, let a team of AI agents turn your travel ideas into a trip worth remembering.</p>
+
+        <div class="planner-card">
+          <div class="card-heading">
+            <div>
+              <div class="heading-kicker">LET'S GET YOU THERE</div>
+              <h2>Where do you want to go?</h2>
+              <p>Tell us the dream. We’ll help map out the details.</p>
+            </div>
+            <div class="online-pill"><span class="status-dot"></span> Ready to plan</div>
+          </div>
+
+          <form id="trip-form">
+            <label class="sr-only" for="trip-prompt">Describe your trip</label>
+            <div class="prompt-wrap">
+              <span class="prompt-symbol" aria-hidden="true">✧</span>
+              <textarea id="trip-prompt" name="prompt" rows="4" placeholder="e.g. Plan a 7-day Japan adventure from Delhi for two people, with flights, boutique hotels and local food experiences under ₹2 lakh..." required></textarea>
+              <div class="prompt-footer">
+                <span class="prompt-hint"><span aria-hidden="true">↳</span> Be as specific as you like</span>
+                <span class="char-count" id="char-count">0 characters</span>
+              </div>
+            </div>
+            <div class="form-bottom">
+              <div class="suggestions" aria-label="Try an example">
+                <span class="suggestion-label">TRY A STARTER</span>
+                <button class="suggestion-chip" type="button" data-prompt="Plan a 7-day Japan trip from Delhi under ₹2 lakh, including flights, hotels and sightseeing.">🇯🇵 Japan escape</button>
+                <button class="suggestion-chip" type="button" data-prompt="Plan a 5-day Dubai trip for two with flights, a good hotel, desert safari and city experiences.">🌆 Dubai getaway</button>
+                <button class="suggestion-chip" type="button" data-prompt="Plan a relaxed 6-day Thailand trip with beaches, local food, hotels and flights on a budget.">🏝️ Thailand break</button>
+              </div>
+              <button class="generate-button" id="generate-button" type="submit">
+                <span class="button-copy"><span>Build my itinerary</span><small>Powered by multi-agent AI</small></span>
+                <span class="button-arrow" aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </form>
+          <div class="privacy-note"><span aria-hidden="true">◈</span> Your plan, your pace. You stay in control of every decision.</div>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item"><span class="trust-icon">⌁</span><span><strong>Smart flight search</strong><small>Compare your options</small></span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><span class="trust-icon">⌂</span><span><strong>Stay recommendations</strong><small>Find your kind of place</small></span></div>
+          <div class="trust-divider"></div>
+          <div class="trust-item"><span class="trust-icon">✧</span><span><strong>Day-by-day itinerary</strong><small>Make every day count</small></span></div>
+        </div>
+      </section>
+
+      <section class="how-section" id="how-it-works">
+        <div class="section-overline">A BETTER WAY TO TRAVEL</div>
+        <h2>Big trip energy. <span class="gradient-text">Small planning effort.</span></h2>
+        <div class="steps-grid">
+          <article class="step-card"><span class="step-number">01</span><div class="step-icon">⌕</div><h3>Share your vision</h3><p>Tell TripMate where you want to go, your budget, dates and what you love.</p></article>
+          <article class="step-card"><span class="step-number">02</span><div class="step-icon">✳</div><h3>Meet your AI crew</h3><p>Specialized agents work together to shape the flights, stays and experiences.</p></article>
+          <article class="step-card"><span class="step-number">03</span><div class="step-icon">↗</div><h3>Explore with a plan</h3><p>Get an organized itinerary you can review, refine and make your own.</p></article>
+        </div>
+      </section>
+      <div id="plan-output" class="plan-output" aria-live="polite"></div>
+    </main>
+
+    <footer class="footer">
+      <a class="brand footer-brand" href="#"><span class="brand-mark">✈</span><span>TripMate<span class="brand-ai"> AI</span></span></a>
+      <span>Thoughtful travel starts here.</span>
+      <span class="footer-note">Built with a multi-agent LangGraph system</span>
+    </footer>
+  </div>
+</body>
+</html>
