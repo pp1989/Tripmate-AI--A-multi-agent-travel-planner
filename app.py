@@ -64,7 +64,7 @@ async def travel_planer(request_data: TravelReqest):
             thread_id="test_id"
             # thread_id=request_data.thread_id
         )
-        print(f"Final Response----------test------------>: {result}")
+        # print(f"Final Response----------test------------>: {result}")
         return JSONResponse(
             content={
                 "success": True,
