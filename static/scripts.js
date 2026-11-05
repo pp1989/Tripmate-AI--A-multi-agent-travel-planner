@@ -188,10 +188,12 @@
   }
 
   function renderTripResults(data) {
+    console.log("Rendering trip results with data:----------->", data);
     const flights = data.flight_results;
     const hotels = data.hotel_results;
+    const weather = data.weather_results;
     const itinerary = data.itinerary;
-    console.log(`Rendering trip results with flights:===+++++++++++++++++++>>>>>>>>>. ${JSON.stringify(flights)}, hotels: ${JSON.stringify(hotels)}, itinerary: ${itinerary}`);
+    // console.log(`Rendering trip results with flights:===+++++++++++++++++++>>>>>>>>>. ${JSON.stringify(flights)}, hotels: ${JSON.stringify(hotels)}, itinerary: ${itinerary}`);
     return `
     <article class="itinerary-document">
       <div class="document-topline">
@@ -209,8 +211,11 @@
 
         <h2>2. Hotel Suggestions</h2>
         ${renderResultsList(hotels, "hotel")}
+        
+        <h2>3. Weather Information</h2>
+        ${renderResultsList(weather, "weather")}
 
-        <h2>3. Complete Travel Itinerary</h2>
+        <h2>4. Complete Travel Itinerary</h2>
         ${renderItinerary(itinerary)}
       </div>
 
@@ -253,8 +258,8 @@
       });
       if (!response.ok) throw new Error(`Request failed (${response.status})`);
       const responseData = await response.json();
-      const plan = responseData.answer ?? responseData;
-      console.log("Trip plan:", plan);
+      const plan = responseData ?? responseData;
+      console.log("Trip plan:--------->", plan);
       output.innerHTML = renderTripResults(plan);
     } catch (error) {
       console.error("Travel API or rendering error:", error);
